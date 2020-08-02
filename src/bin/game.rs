@@ -32,13 +32,19 @@ fn game<RngT: rand::Rng>( rng : &mut RngT, partitions : &Vec<Vec<usize>> ) -> us
     result
 }
 
+fn expected_reward() -> f64 {
+    let partitions = partitions();
+    let mut rng = SmallRng::seed_from_u64(123);
+    const N:usize = 1000;
+    let mut sum = 0.;
+    for _ in 0..N {
+        sum += game(&mut rng, &partitions) as f64;
+    }
+    sum / (N as f64)
+}
+
 fn main() {
     let partitions = partitions();
     println!("{:#?}", partitions);
-    println!("loulou");
-    let mut rng = SmallRng::seed_from_u64(123);
-    println!("{}", rng.gen_range(1,100));
-    game(&mut rng, &partitions);
-    game(&mut rng, &partitions);
-    game(&mut rng, &partitions);
+    println!("Expected return for random strat: {:.2}", expected_reward());
 }
