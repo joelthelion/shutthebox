@@ -1,0 +1,9 @@
+Improve formatting:
+  Fixed with binary numbers
+  Print numbers instead of binaries?
+  Display mean reward
+
+Profile (time spent formatting?)
+
+Release / Debug for rollouts
+Script for quick testing (compile, run, display results)

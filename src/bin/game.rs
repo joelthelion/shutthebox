@@ -118,7 +118,7 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
     let mut state = 511;
     let mut qs : Vec<Q> = Vec::new();
     loop {
-        let roll = rng.gen_range(2,13);
+        let roll = rng.gen_range(1,7) + rng.gen_range(1,7);
         println!("{:#b} / {}", state, roll);
         let choice = policy.choose(state, roll);
         if let Some((n, mv)) = choice {
