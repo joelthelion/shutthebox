@@ -62,7 +62,7 @@ impl Policy for QPolicy {
                 continue
             }
             let q_value = self.get(state, roll, n);
-            println!("{:#b} : {:?}", mv, q_value);
+            println!("{:#011b} : {:?}", mv, q_value);
             let reward = if epsilon_value < self.epsilon {
                 self.rng.gen()
             } else {
@@ -119,11 +119,11 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
     let mut qs : Vec<Q> = Vec::new();
     loop {
         let roll = rng.gen_range(1,7) + rng.gen_range(1,7);
-        println!("{:#b} / {}", state, roll);
+        println!("{:#010b} / {}", state, roll);
         let choice = policy.choose(state, roll);
         if let Some((n, mv)) = choice {
             let new = state & !mv;
-            println!("\t{:#b} -> {:#b}", mv, new);
+            println!("\t{:#010b} -> {:#010b}", mv, new);
             qs.push(Q{state, roll, action:n});
             if new == 0 {
                 break
@@ -137,7 +137,7 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
     println!("{:?}", qs);
     for &q in qs.iter().rev() {
         // FIXME use discount
-        policy.set(q, -(result as f64));
+        policy.set(q, 45.-(result as f64));
     }
     println!("Score: {}", result);
     result
