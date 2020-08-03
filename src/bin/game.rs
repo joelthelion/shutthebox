@@ -15,7 +15,7 @@ trait Policy {
     fn set(&mut self, q: Q, reward: f64);
 }
 
-#[derive(Default, Clone, Copy, Debug)]
+#[derive(Clone, Copy, Debug)]
 struct ValueCount {
     samples : usize,
     reward : f64
@@ -42,7 +42,7 @@ impl QPolicy {
             table : Vec::new(),
             epsilon : 0.05
         };
-        policy.table.resize_with(512*13*MAX_MOVES, Default::default);
+        policy.table.resize(512*13*MAX_MOVES, ValueCount { samples: 0, reward: 0.});
         policy
     }
     fn get(&self, state: usize, roll: usize, action: usize) -> ValueCount {
@@ -52,15 +52,15 @@ impl QPolicy {
 
 impl Policy for QPolicy {
     fn choose(&mut self, state: usize, roll: usize) -> Option<(usize,usize)> {
-        let mut max_reward = f64::NEG_INFINITY;
+        let mut max_reward = std::f64::NEG_INFINITY;
         let mut best : Option<(usize, usize)> = None;
         for (n, &mv) in self.partitions[roll].iter().enumerate() {
             if mv & !state != 0 { // if move is not legal
                 continue
             }
             let q_value = self.get(state, roll, n);
-            println!("{:?}", q_value);
-            let reward = if q_value.samples == 0 { 0. } else { q_value.reward / q_value.samples as f64 };
+            println!("{:#b} : {:?}", mv, q_value);
+            let reward = if q_value.samples == 0 { std::f64::INFINITY } else { q_value.reward / q_value.samples as f64 };
             if reward > max_reward {
                 max_reward = reward;
                 best = Some((n, mv));
@@ -130,7 +130,7 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
     println!("{:?}", qs);
     for &q in qs.iter().rev() {
         // FIXME use discount
-        policy.set(q, result as f64);
+        policy.set(q, -(result as f64));
     }
     println!("Score: {}", result);
     result
