@@ -10,7 +10,7 @@ use shutthebox::*;
 const SIMS : usize = 1000;
 
 #[cfg(not(debug_assertions))]
-const SIMS : usize = 1_000_000;
+const SIMS : usize = 10_000_000;
 
 trait Policy {
     /// Returns (n, action)
@@ -192,6 +192,8 @@ fn main() {
     let mut policy = RandomPolicy::new();
     println!("Expected return for random strat: {:.2}", expected_reward(&mut policy, 1000));
     let mut policy = QPolicy::new();
+    println!("Expected return for q strat: {:.2}", expected_reward(&mut policy, SIMS));
+    policy.epsilon = 0.01;
     println!("Expected return for q strat: {:.2}", expected_reward(&mut policy, SIMS));
     policy.epsilon = 0.;
     println!("Expected return for q strat (epsilon 0): {:.2}", expected_reward(&mut policy, 10_000));

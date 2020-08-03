@@ -1,20 +1,8 @@
-Improve formatting:
-  Fixed with binary numbers
-  Print numbers instead of binaries?
-  Display mean reward
-
-Profile (time spent formatting?)
-
-Release / Debug for rollouts
-Script for quick testing (compile, run, display results)
-
 Improve performance
-  Increase number of samples before returning expected reward
-  Randomize choice of unexplored play (BIGVALUE + rand)
-  Gradual epsilon lowering
-  Temperature scheme?
+  Temperature scheme??
 
 Document and publish
+  Readme + Comments and clarification
   r/reinforcementlearning
   hacker news / r/programming?
   tildes?
