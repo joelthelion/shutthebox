@@ -143,9 +143,8 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
     result
 }
 
-fn expected_reward<P: Policy>(policy : &mut P) -> f64 {
+fn expected_reward<P: Policy>(policy : &mut P, N: usize) -> f64 {
     let mut rng = SmallRng::seed_from_u64(123);
-    const N:usize = 100000;
     let mut sum = 0.;
     for _ in 0..N {
         sum += game(policy, &mut rng) as f64;
@@ -157,7 +156,9 @@ fn main() {
     let partitions = partitions();
     println!("{:#?}", partitions);
     let mut policy = RandomPolicy::new();
-    println!("Expected return for random strat: {:.2}", expected_reward(&mut policy));
+    println!("Expected return for random strat: {:.2}", expected_reward(&mut policy, 1000));
     let mut policy = QPolicy::new();
-    println!("Expected return for q strat: {:.2}", expected_reward(&mut policy));
+    println!("Expected return for q strat: {:.2}", expected_reward(&mut policy, 500_000));
+    policy.epsilon = 0.;
+    println!("Expected return for q strat (epsilon 0): {:.2}", expected_reward(&mut policy, 10_000));
 }
