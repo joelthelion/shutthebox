@@ -10,7 +10,7 @@ use shutthebox::*;
 const SIMS : usize = 1000;
 
 #[cfg(not(debug_assertions))]
-const SIMS : usize = 500_000;
+const SIMS : usize = 1_000_000;
 
 trait Policy {
     /// Returns (n, action)
@@ -20,10 +20,20 @@ trait Policy {
     fn set_verbose(&mut self, verbose: bool);
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy)]
 struct ValueCount {
     samples : usize,
     reward : f64
+}
+
+impl std::fmt::Debug for ValueCount {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ValueCount")
+         .field("samples", &self.samples)
+         .field("reward", &self.reward)
+         .field("expectation", &((100.*(self.reward/self.samples as f64)).round()/100.))
+         .finish()
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -75,7 +85,8 @@ impl Policy for QPolicy {
             let reward = if epsilon_value < self.epsilon {
                 self.rng.gen()
             } else {
-                if q_value.samples == 0 { std::f64::INFINITY } else { q_value.reward / q_value.samples as f64 }
+                // Use ten playouts for initial exploration
+                if q_value.samples <= 10 { 1000. + self.rng.gen::<f64>() } else { q_value.reward / q_value.samples as f64 }
             };
             if reward > max_reward {
                 max_reward = reward;
@@ -139,7 +150,7 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
         if let Some((n, mv)) = choice {
             let new = state & !mv;
             if verbose {
-                println!("\t{:#010b} -> {:#010b}", mv, new);
+                println!("\t{:#011b} -> {:#011b}", mv, new);
             }
             qs.push(Q{state, roll, action:n});
             if new == 0 {
