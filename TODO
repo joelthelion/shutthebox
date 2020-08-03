@@ -7,3 +7,15 @@ Profile (time spent formatting?)
 
 Release / Debug for rollouts
 Script for quick testing (compile, run, display results)
+
+Improve performance
+  Increase number of samples before returning expected reward
+  Randomize choice of unexplored play (BIGVALUE + rand)
+  Gradual epsilon lowering
+  Temperature scheme?
+
+Document and publish
+  r/reinforcementlearning
+  hacker news / r/programming?
+  tildes?
+  codingame
