@@ -31,7 +31,8 @@ struct Q {
 struct QPolicy {
     partitions : Vec<Vec<usize>>,
     table : Vec<ValueCount>,
-    epsilon : f64
+    epsilon : f64,
+    rng : SmallRng
 }
 
 const MAX_MOVES : usize = 40;
@@ -40,7 +41,8 @@ impl QPolicy {
         let mut policy = QPolicy {
             partitions : partitions(),
             table : Vec::new(),
-            epsilon : 0.05
+            epsilon : 0.05,
+            rng : SmallRng::seed_from_u64(123),
         };
         policy.table.resize(512*13*MAX_MOVES, ValueCount { samples: 0, reward: 0.});
         policy
@@ -54,13 +56,18 @@ impl Policy for QPolicy {
     fn choose(&mut self, state: usize, roll: usize) -> Option<(usize,usize)> {
         let mut max_reward = std::f64::NEG_INFINITY;
         let mut best : Option<(usize, usize)> = None;
+        let epsilon_value : f64 = self.rng.gen();
         for (n, &mv) in self.partitions[roll].iter().enumerate() {
             if mv & !state != 0 { // if move is not legal
                 continue
             }
             let q_value = self.get(state, roll, n);
             println!("{:#b} : {:?}", mv, q_value);
-            let reward = if q_value.samples == 0 { std::f64::INFINITY } else { q_value.reward / q_value.samples as f64 };
+            let reward = if epsilon_value < self.epsilon {
+                self.rng.gen()
+            } else {
+                if q_value.samples == 0 { std::f64::INFINITY } else { q_value.reward / q_value.samples as f64 }
+            };
             if reward > max_reward {
                 max_reward = reward;
                 best = Some((n, mv));
@@ -138,7 +145,7 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
 
 fn expected_reward<P: Policy>(policy : &mut P) -> f64 {
     let mut rng = SmallRng::seed_from_u64(123);
-    const N:usize = 10000;
+    const N:usize = 100000;
     let mut sum = 0.;
     for _ in 0..N {
         sum += game(policy, &mut rng) as f64;
