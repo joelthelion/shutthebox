@@ -144,7 +144,7 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
     loop {
         let roll = rng.gen_range(1,7) + rng.gen_range(1,7);
         if verbose {
-            println!("{:#010b} / {}", state, roll);
+            println!("{:#011b} / {}", state, roll);
         }
         let choice = policy.choose(state, roll);
         if let Some((n, mv)) = choice {
@@ -170,7 +170,7 @@ fn game<PolicyT: Policy, RngT: rand::Rng>( policy: &mut PolicyT, rng : &mut RngT
         policy.set(q, 45.-(result as f64));
     }
     if verbose {
-        println!("Score: {}", result);
+        println!("Score: {} (reward: {})", result, 45-result);
     }
     result
 }
