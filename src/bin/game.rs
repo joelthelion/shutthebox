@@ -67,6 +67,19 @@ impl QPolicy {
     fn get(&self, state: usize, roll: usize, action: usize) -> ValueCount {
         self.table[state*13*MAX_MOVES + roll*MAX_MOVES + action]
     }
+    fn dump_table(&self) {
+        for state in 0..512 {
+            for roll in 2..13 {
+                println!("{:#011b} - {}", state, roll);
+                for (n, &mv) in self.partitions[roll].iter().enumerate() {
+                    let value = self.get(state, roll, n);
+                    if value.samples > 0 {
+                        println!("\t {:#011b} -> {:?}", mv, value);
+                    }
+                }
+            }
+        }
+    }
 }
 
 impl Policy for QPolicy {
@@ -197,4 +210,5 @@ fn main() {
     println!("Expected return for q strat: {:.2}", expected_reward(&mut policy, SIMS));
     policy.epsilon = 0.;
     println!("Expected return for q strat (epsilon 0): {:.2}", expected_reward(&mut policy, 10_000));
+    policy.dump_table();
 }
