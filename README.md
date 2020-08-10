@@ -9,3 +9,9 @@ Shut the Box! is a [traditional game](https://www.youtube.com/watch?v=DBtEtcivvI
 For this experiment, we use a very simple approach called tabular Q-learning. In Q-learning, we try to learn the Q function, which is the mapping from (state,action) pairs to a future *reward*. The reward is a numerical value associated to a particular game outcome. Here, we simply use the score (inverted in order to get a positive reward).
 
 States are just particular game settings that can occur during a game. At each non-terminal state, the player can choose between various legal moves, or actions. Q-learning attempts to learn the expected reward for all combinations of a game state and a chosen action.
+
+The Q function can be represented and approximated in different ways. For games with very large or infinite state spaces, some universal function approximator such as neural nets is often used. In this case, however, we can simply store all values in a big table. That makes the algorithm simpler and it also makes it simpler to get convergence.
+
+## Training
+
+How do we learn the Q-function? 
